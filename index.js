@@ -9,7 +9,7 @@ if (mobileBtn && mobileMenu) {
 }
 
 // Close mobile menu on link click
-document.querySelectorAll('.mobile-link').forEach(link => {
+document.querySelectorAll('.mobile-link, #mobile-menu a[href^="#"]').forEach(link => {
   link.addEventListener('click', () => {
     if (mobileMenu) {
       mobileMenu.classList.add('hidden');

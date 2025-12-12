@@ -14,9 +14,8 @@ A beginner-friendly guide to mastering Vite in Laravel applications. Stop strugg
 ## 📋 Prerequisites
 
 - Basic knowledge of Laravel
-- Understanding of JavaScript/TypeScript
-- Node.js and npm installed
-- A Laravel project set up with Vite
+- Understanding of JavaScript
+- A modern web browser
 
 ## 🎯 Key Concepts
 
@@ -99,19 +98,20 @@ Each of these MUST be listed in your `vite.config.js` `input` array.
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Vite, React, TypeScript
-- **Styling**: Tailwind CSS
+- **Frontend**: Pure HTML, CSS, JavaScript (no framework dependencies)
+- **Styling**: Tailwind CSS (via CDN)
 - **Backend**: Laravel (with Vite plugin)
-- **Build Tools**: Vite, PostCSS
-- **Fonts**: Plus Jakarta Sans, JetBrains Mono
+- **Build Tools**: Vite
+- **Fonts**: Plus Jakarta Sans, JetBrains Mono (via Google Fonts)
 
 ## 📁 Project Structure
 
 ```
 vite-laravel-guideline/
 ├── index.html          # Main tutorial page
-├── index.css          # Extracted styles
-├── index.tsx          # Extracted JavaScript
+├── index.css          # Custom styles
+├── index.js           # JavaScript for interactivity
+├── .gitignore         # Git ignore file
 └── README.md          # This file
 ```
 
@@ -119,21 +119,25 @@ vite-laravel-guideline/
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/lmottasin/vite-laravel-guideline
    cd vite-laravel-guideline
    ```
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+2. **Open in browser**:
+   - Simply open `index.html` in your web browser
+   - Or use a local server for development:
+     ```bash
+     # Using Python
+     python -m http.server 8000
 
-3. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
+     # Using Node.js (if you have http-server)
+     npx http-server
 
-4. **Open your browser** and navigate to `http://localhost:5173`
+     # Using PHP
+     php -S localhost:8000
+     ```
+
+3. **Visit `http://localhost:8000`** (or whichever port you chose)
 
 ## 🔧 Common Issues & Solutions
 
