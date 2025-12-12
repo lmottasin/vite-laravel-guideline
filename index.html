@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite & Laravel: The Missing Manual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Plus Jakarta Sans', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              primary: {
+                50: '#eff6ff',
+                100: '#dbeafe',
+                200: '#bfdbfe',
+                300: '#93c5fd',
+                400: '#60a5fa',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+                800: '#1e40af',
+                900: '#1e3a8a',
+              },
+              laravel: '#FF2D20',
+              vite: '#646CFF',
+            },
+            animation: {
+              'blob': 'blob 7s infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'merge-desktop': 'mergeDesktop 3s ease-in-out infinite',
+              'merge-mobile': 'mergeMobile 3s ease-in-out infinite',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-6px)' },
+              },
+              mergeDesktop: {
+                '0%': { transform: 'translateX(0) scale(1)', opacity: '1' },
+                '50%': { transform: 'translateX(60px) scale(0.5)', opacity: '0.5' },
+                '100%': { transform: 'translateX(120px) scale(0)', opacity: '0' },
+              },
+              mergeMobile: {
+                '0%': { transform: 'translateY(0) scale(1)', opacity: '1' },
+                '50%': { transform: 'translateY(40px) scale(0.5)', opacity: '0.5' },
+                '100%': { transform: 'translateY(80px) scale(0)', opacity: '0' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="antialiased text-slate-600 bg-slate-50 font-sans selection:bg-primary-200 selection:text-primary-900">
+
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-1 z-[60] bg-slate-200">
+      <div id="progress-bar" class="h-full bg-gradient-to-r from-vite to-laravel w-0 transition-all duration-150"></div>
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div class="absolute inset-0 bg-dot-pattern opacity-[0.4]"></div>
+      <div class="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-purple-200/30 blur-3xl mix-blend-multiply animate-blob"></div>
+      <div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-blue-200/30 blur-3xl mix-blend-multiply animate-blob animation-delay-2000"></div>
+      <div class="absolute -bottom-[20%] left-[20%] w-[50%] h-[50%] rounded-full bg-pink-200/30 blur-3xl mix-blend-multiply animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 w-full backdrop-blur-lg bg-white/70 border-b border-white/20 shadow-sm transition-all duration-300" id="navbar">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <div class="flex items-center gap-3">
+            <div class="relative flex items-center justify-center w-10 h-10 bg-slate-900 rounded-xl text-white font-bold shadow-lg overflow-hidden group cursor-pointer hover:scale-105 transition-transform">
+              <div class="absolute inset-0 bg-gradient-to-br from-vite to-laravel opacity-80 group-hover:opacity-100 transition-opacity"></div>
+              <span class="relative z-10 text-lg">VL</span>
+            </div>
+            <span class="font-bold text-slate-800 tracking-tight hidden sm:block">Vite & Laravel Guide</span>
+          </div>
+
+          <!-- Desktop Menu -->
+          <div class="hidden md:flex items-center gap-6">
+            <a href="https://laravel.com/docs/vite" target="_blank" class="text-sm font-medium text-slate-500 hover:text-laravel transition-colors">Official Docs</a>
+            <a href="#summary" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-full shadow-lg shadow-slate-900/20 hover:shadow-slate-900/30 transition-all transform hover:-translate-y-0.5">
+              Jump to Summary
+            </a>
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl p-4 space-y-4">
+        <div class="grid grid-cols-1 gap-2">
+            <a href="#intro" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">What is Vite?</a>
+            <a href="#bundling" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">Bundling Explained</a>
+            <a href="#config" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">Configuration</a>
+            <a href="#laravel-plugin" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">Laravel Plugin</a>
+            <a href="#dev-vs-prod" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">Dev vs Prod</a>
+            <a href="#references" class="mobile-link p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium">References</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+      
+      <!-- Hero Section -->
+      <div class="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-primary-700 text-sm font-medium mb-6">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+          </span>
+          Beginner Friendly Guide
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6">
+          Mastering <span class="text-transparent bg-clip-text bg-gradient-to-r from-vite to-purple-600">Vite</span> in <span class="text-transparent bg-clip-text bg-gradient-to-r from-laravel to-red-600">Laravel</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-500 leading-relaxed">
+          Stop struggling with 404 errors in production. Understand exactly how bundling works, why you need entry points, and how to configure your app correctly.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="hidden lg:block lg:col-span-3 sticky top-28 animate-on-scroll" style="transition-delay: 100ms;">
+          <div class="bg-white/50 backdrop-blur-sm rounded-2xl border border-white/50 shadow-sm p-4">
+            <h5 class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">On this page</h5>
+            <nav class="space-y-1" id="sidebar-nav">
+              <a href="#intro" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">What is Vite?</a>
+              <a href="#bundling" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">Understanding Bundling</a>
+              <a href="#config" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">The Config File</a>
+              <a href="#plugin" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">Vite Plugins</a>
+              <a href="#laravel-plugin" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">Laravel Integration</a>
+              <a href="#why-tsx" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">Why List Files?</a>
+              <a href="#dev-vs-prod" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all">The Local Trap</a>
+              <a href="#summary" class="nav-link block px-4 py-2 text-sm font-semibold text-primary-600 rounded-lg hover:bg-primary-50 transition-all mt-4">TL;DR Summary</a>
+              <a href="#references" class="nav-link block px-4 py-2 text-sm text-slate-600 rounded-lg hover:bg-slate-50 transition-all mt-1">References</a>
+            </nav>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="lg:col-span-9 space-y-24">
+
+          <!-- 1. Intro -->
+          <section id="intro" class="group scroll-mt-32 animate-on-scroll">
+            <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">What is Vite?</h2>
+                <p class="text-slate-500 mt-1">The next-generation frontend tool.</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/60 transition-shadow duration-300">
+              <p class="text-lg leading-relaxed text-slate-600">
+                Vite is a fast build tool that replaces older tools like Webpack. It serves your files instantly during development and bundles your Javascript and CSS into highly optimized files for production.
+              </p>
+            </div>
+          </section>
+
+          <!-- 2. Bundling Animation -->
+          <section id="bundling" class="group scroll-mt-32 animate-on-scroll">
+            <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">What is "Bundling"?</h2>
+                <p class="text-slate-500 mt-1">From many messy files to one optimized package.</p>
+              </div>
+            </div>
+            
+            <div class="bg-slate-900 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900"></div>
+              
+              <!-- Visualization -->
+              <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 min-h-[24rem] md:h-64">
+                
+                <!-- Left: Many Files (Desktop: Stacked Left, Mobile: Row Top) -->
+                <div class="flex flex-row md:flex-col justify-center items-center md:items-end gap-3 w-full md:w-1/3">
+                  <!-- File 1 -->
+                  <div class="w-16 md:w-32 h-16 md:h-10 bg-slate-700 rounded border border-slate-600 flex flex-col md:flex-row items-center justify-center md:px-3 gap-1 md:gap-2 animate-float" style="animation-delay: 0s">
+                    <div class="w-3 h-3 md:w-4 md:h-4 rounded bg-blue-500"></div>
+                    <div class="hidden md:block h-2 w-16 bg-slate-500 rounded"></div>
+                    <span class="md:hidden text-[10px] text-slate-400">Btn.tsx</span>
+                  </div>
+                  <!-- File 2 -->
+                  <div class="w-16 md:w-28 h-16 md:h-10 bg-slate-700 rounded border border-slate-600 flex flex-col md:flex-row items-center justify-center md:px-3 gap-1 md:gap-2 animate-float" style="animation-delay: 1s">
+                    <div class="w-3 h-3 md:w-4 md:h-4 rounded bg-yellow-500"></div>
+                    <div class="hidden md:block h-2 w-12 bg-slate-500 rounded"></div>
+                    <span class="md:hidden text-[10px] text-slate-400">Nav.tsx</span>
+                  </div>
+                  <!-- File 3 -->
+                  <div class="w-16 md:w-36 h-16 md:h-10 bg-slate-700 rounded border border-slate-600 flex flex-col md:flex-row items-center justify-center md:px-3 gap-1 md:gap-2 animate-float" style="animation-delay: 2s">
+                    <div class="w-3 h-3 md:w-4 md:h-4 rounded bg-green-500"></div>
+                    <div class="hidden md:block h-2 w-20 bg-slate-500 rounded"></div>
+                    <span class="md:hidden text-[10px] text-slate-400">Main.ts</span>
+                  </div>
+                </div>
+
+                <!-- Center: The Process -->
+                <div class="flex-1 flex justify-center items-center w-full md:w-auto relative py-4 md:py-0">
+                   <!-- Desktop Pipe (Horizontal) -->
+                   <div class="hidden md:block relative w-full h-1 bg-slate-700 rounded-full overflow-hidden">
+                     <div class="absolute inset-0 bg-blue-500 animate-[mergeDesktop_2s_ease-in-out_infinite]"></div>
+                   </div>
+                   
+                   <!-- Mobile Pipe (Vertical) -->
+                   <div class="md:hidden relative h-24 w-1 bg-slate-700 rounded-full overflow-hidden">
+                     <div class="absolute inset-0 bg-blue-500 animate-[mergeMobile_2s_ease-in-out_infinite]"></div>
+                   </div>
+
+                   <!-- Gear Icon -->
+                   <div class="absolute bg-slate-800 p-2 rounded-full border border-slate-600 shadow-xl z-20">
+                     <svg class="w-8 h-8 md:w-6 md:h-6 text-white animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                   </div>
+                </div>
+
+                <!-- Right: One Bundle -->
+                <div class="w-full md:w-1/3 flex justify-center items-center">
+                  <div class="w-32 h-32 md:w-40 md:h-48 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg shadow-lg border border-blue-400 flex flex-col items-center justify-center gap-3 text-white transform hover:scale-105 transition-transform duration-300">
+                    <svg class="w-10 h-10 md:w-12 md:h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                    <div class="text-center">
+                      <div class="font-bold text-lg">app.js</div>
+                      <div class="text-xs text-blue-200">Optimized</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <p class="relative z-10 text-slate-400 text-center mt-8 text-sm">Vite merges and minifies your components into browser-ready assets.</p>
+            </div>
+          </section>
+
+          <!-- 3. Config -->
+          <section id="config" class="group scroll-mt-32 animate-on-scroll">
+            <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center text-white shadow-lg shadow-slate-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">vite.config.js</h2>
+                <p class="text-slate-500 mt-1">The control center.</p>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/60 transition-shadow duration-300">
+              <p class="text-lg leading-relaxed text-slate-600 mb-6">
+                Just like Laravel's config files, this file tells Vite exactly how to behave, what plugins to use, and where your entry files live.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100 hover:border-blue-200 transition-colors">
+                  <div class="font-bold text-slate-800 mb-1">Plugins</div>
+                  <div class="text-sm text-slate-500">React, Tailwind, Laravel</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100 hover:border-blue-200 transition-colors">
+                  <div class="font-bold text-slate-800 mb-1">Inputs</div>
+                  <div class="text-sm text-slate-500">Files to bundle</div>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-2xl text-center border border-slate-100 hover:border-blue-200 transition-colors">
+                  <div class="font-bold text-slate-800 mb-1">Server</div>
+                  <div class="text-sm text-slate-500">Port & HMR settings</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4 & 5. Plugins + Laravel Plugin -->
+          <section id="plugin" class="group scroll-mt-32 animate-on-scroll">
+             <!-- Content Merged for Flow -->
+             <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-laravel to-red-600 flex items-center justify-center text-white shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">The Laravel Plugin</h2>
+                <p class="text-slate-500 mt-1">Bridging the gap between PHP and JS.</p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl overflow-hidden shadow-xl shadow-slate-200/50 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/60 transition-shadow duration-300">
+              <div class="p-8">
+                <p class="text-slate-600 mb-6">
+                  Vite by itself doesn't know about Laravel. The plugin allows you to use the <code>@vite()</code> directive in Blade and handles the auto-refresh (HMR) magic.
+                </p>
+
+                <!-- Code Window -->
+                <div class="code-window bg-slate-900 rounded-xl overflow-hidden border border-slate-800 transform hover:scale-[1.01] transition-transform duration-300">
+                  <div class="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+                    <div class="flex gap-2">
+                      <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                      <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                      <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <span class="text-xs text-slate-400 font-mono">vite.config.js</span>
+                    <button onclick="copyToClipboard(this)" class="text-xs text-slate-400 hover:text-white transition-colors">Copy</button>
+                  </div>
+                  <div class="p-4 overflow-x-auto">
+<pre><code class="text-sm font-mono text-slate-300">import <span class="text-purple-400">laravel</span> from <span class="text-green-400">'laravel-vite-plugin'</span>;
+import <span class="text-purple-400">react</span> from <span class="text-green-400">'@vitejs/plugin-react'</span>;
+
+export default <span class="text-blue-400">defineConfig</span>({
+    plugins: [
+        <span class="text-blue-400">laravel</span>({
+            input: [
+                <span class="text-green-400">"resources/js/app.js"</span>, 
+                <span class="text-green-400">"resources/css/app.css"</span>
+            ],
+            refresh: <span class="text-orange-400">true</span>,
+        }),
+        <span class="text-blue-400">react</span>(),
+    ],
+});</code></pre>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Footer Alert -->
+              <div class="bg-red-50 p-6 border-t border-red-100 flex items-start gap-3">
+                <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <div>
+                  <h4 class="text-red-800 font-bold text-sm uppercase tracking-wide">Critical Configuration Rule</h4>
+                  <p class="text-red-700 text-sm mt-1">If you add a new entry file (like <code>admin.tsx</code>), you MUST add it to the <code>input</code> array above. Otherwise, it will not be built.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. Why TSX (Problem Area) -->
+          <section id="why-tsx" class="group scroll-mt-32 animate-on-scroll">
+             <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">Why pass TSX Files?</h2>
+                <p class="text-slate-500 mt-1">The most common mistake developers make.</p>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/60 transition-shadow duration-300">
+              <p class="text-slate-600 mb-6">
+                When you have a modular app (e.g., Inventory, Admin, Shop packages), each has its own "Main" file. Vite is not a mind reader; it only looks at what you list in the <code>input</code> array.
+              </p>
+              
+               <!-- Code Window -->
+                <div class="code-window bg-slate-900 rounded-xl overflow-hidden border border-slate-800 mb-6 transform hover:scale-[1.01] transition-transform duration-300">
+                  <div class="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+                    <span class="text-xs text-slate-400 font-mono">Proper Multi-Module Config</span>
+                  </div>
+                  <div class="p-4 overflow-x-auto">
+<pre><code class="text-sm font-mono text-slate-300">input: [
+    <span class="text-slate-500">// Global</span>
+    <span class="text-green-400">"resources/js/app.js"</span>,
+    
+    <span class="text-slate-500">// Modules (CRITICAL)</span>
+    <span class="text-green-400">"packages/inventory/resources/assets/js/index.tsx"</span>,
+    <span class="text-green-400">"packages/admin/resources/assets/js/index.tsx"</span>,
+    <span class="text-green-400">"packages/shop/resources/assets/js/index.tsx"</span>
+]</code></pre>
+                  </div>
+                </div>
+
+                <div class="p-4 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-900 text-sm">
+                  <strong>Analogy:</strong> Think of the Input Array as the Guest List for a party. If your file isn't on the list, the bouncer (Vite Build) won't let it in, even if it's dressed up nicely.
+                </div>
+            </div>
+          </section>
+
+          <!-- 7. Dev vs Prod Comparison -->
+          <section id="dev-vs-prod" class="group scroll-mt-32 animate-on-scroll">
+             <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">The "It Works Locally" Trap</h2>
+                <p class="text-slate-500 mt-1">Why your deploy fails when localhost is fine.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Local Card -->
+              <div class="bg-white rounded-3xl p-6 shadow-lg border border-emerald-100 relative overflow-hidden group/card hover:shadow-2xl transition-all duration-300">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-100 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover/card:scale-110"></div>
+                <div class="relative z-10">
+                  <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold uppercase tracking-wider">npm run dev</span>
+                  </div>
+                  <h3 class="text-xl font-bold text-emerald-900 mb-2">Development Mode</h3>
+                  <p class="text-sm text-slate-600 mb-4">The "Forgiving" Mode</p>
+                  
+                  <ul class="space-y-3">
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      Vite runs a live server.
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      Files are compiled <strong>on demand</strong> when the browser asks for them.
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      If you forget to list a file in config, Vite might still find it via imports.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Prod Card -->
+              <div class="bg-white rounded-3xl p-6 shadow-lg border border-orange-100 relative overflow-hidden group/card hover:shadow-2xl transition-all duration-300">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-orange-100 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover/card:scale-110"></div>
+                <div class="relative z-10">
+                  <div class="flex items-center gap-2 mb-4">
+                    <span class="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-bold uppercase tracking-wider">npm run build</span>
+                  </div>
+                  <h3 class="text-xl font-bold text-orange-900 mb-2">Production Mode</h3>
+                  <p class="text-sm text-slate-600 mb-4">The "Strict" Mode</p>
+                  
+                  <ul class="space-y-3">
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      No server. Just static files.
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      Vite ONLY looks at the <code>input</code> config list.
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-slate-700">
+                      <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                      <strong>Forgot a file?</strong> It doesn't get built. 404 Error.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Summary Checklist -->
+          <section id="summary" class="bg-slate-900 rounded-3xl p-8 md:p-12 text-white shadow-2xl relative overflow-hidden scroll-mt-32 animate-on-scroll">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary-600 rounded-full blur-[100px] opacity-20 pointer-events-none"></div>
+            
+            <h2 class="text-3xl font-bold mb-8 relative z-10">Final Checklist for Entry-Level Devs</h2>
+            
+            <div class="space-y-6 relative z-10">
+              <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center font-bold text-sm">1</div>
+                <div>
+                  <h4 class="font-bold text-lg">Vite = Speed</h4>
+                  <p class="text-slate-400 text-sm">It serves instantly in dev and bundles compactly for prod.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center font-bold text-sm">2</div>
+                <div>
+                  <h4 class="font-bold text-lg">Bundling is Merging</h4>
+                  <p class="text-slate-400 text-sm">Don't ship 100 tiny JS files. Ship one big optimized one.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center font-bold text-sm">3</div>
+                <div>
+                  <h4 class="font-bold text-lg">Don't Trust Localhost</h4>
+                  <p class="text-slate-400 text-sm">Just because it works with <code>npm run dev</code> doesn't mean your config is correct.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-4 p-4 rounded-xl bg-white/10 border border-white/10">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-red-500 flex items-center justify-center font-bold text-sm">!</div>
+                <div>
+                  <h4 class="font-bold text-lg text-red-300">The Golden Rule</h4>
+                  <p class="text-slate-300 text-sm">If you want a TSX/JS file to be an entry point in Laravel, you <strong>MUST</strong> add it to the <code>input</code> array in <code>vite.config.js</code>.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- References -->
+          <section id="references" class="scroll-mt-32 animate-on-scroll">
+             <div class="flex gap-4 mb-4">
+              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-teal-500/30">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900">References</h2>
+                <p class="text-slate-500 mt-1">Useful links and documentation.</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+               <a href="https://vitejs.dev/guide/" target="_blank" class="block p-6 bg-white border border-slate-200 rounded-2xl hover:border-teal-400 hover:shadow-lg hover:shadow-teal-500/10 transition-all group">
+                 <h4 class="font-bold text-slate-800 group-hover:text-teal-600 flex items-center gap-2">
+                   Vite Documentation
+                   <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                 </h4>
+                 <p class="text-sm text-slate-500 mt-2">The official guide for Vite configuration and features.</p>
+               </a>
+
+               <a href="https://laravel.com/docs/master/vite" target="_blank" class="block p-6 bg-white border border-slate-200 rounded-2xl hover:border-red-400 hover:shadow-lg hover:shadow-red-500/10 transition-all group">
+                 <h4 class="font-bold text-slate-800 group-hover:text-red-600 flex items-center gap-2">
+                   Laravel Vite Plugin
+                   <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                 </h4>
+                 <p class="text-sm text-slate-500 mt-2">Official Laravel documentation on asset bundling.</p>
+               </a>
+
+               <a href="https://laracasts.com/series/vite-and-laravel-the-perfect-match" target="_blank" class="block p-6 bg-white border border-slate-200 rounded-2xl hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/10 transition-all group">
+                 <h4 class="font-bold text-slate-800 group-hover:text-blue-600 flex items-center gap-2">
+                   Laracasts
+                   <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                 </h4>
+                 <p class="text-sm text-slate-500 mt-2">Video tutorials on setting up and using Vite with Laravel.</p>
+               </a>
+
+               <a href="https://github.com/vitejs/awesome-vite" target="_blank" class="block p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/10 transition-all group">
+                 <h4 class="font-bold text-slate-800 group-hover:text-purple-600 flex items-center gap-2">
+                   Awesome Vite
+                   <svg class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                 </h4>
+                 <p class="text-sm text-slate-500 mt-2">A curated list of awesome Vite.js resources and plugins.</p>
+               </a>
+            </div>
+          </section>
+
+        </main>
+      </div>
+      
+      <footer class="mt-24 pb-8 text-center border-t border-slate-200 pt-8">
+        <p class="text-slate-400 text-sm">Built with ❤️ for the Laravel Community</p>
+      </footer>
+    </div>
+
+    <script src="/index.js"></script>
+</body>
+</html>
